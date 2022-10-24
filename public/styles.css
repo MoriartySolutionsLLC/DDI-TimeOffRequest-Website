@@ -1,0 +1,163 @@
+strong {
+	color: red;
+	text-decoration: underline;
+}
+
+h1 {
+	font-size: 60px;
+	text-shadow: 2px 2px 2px #BEBEBE;
+	margin-top: 1px;
+	margin-bottom: 5px;
+}
+
+h2 {
+	font-size: 30px;
+}
+
+hr.line1 {
+	border-top: 10px solid #00008b; 
+}
+
+hr.line2 {
+	border-top: 5px solid #00008b;
+}
+body {
+	font-family: Trebuchet MS;
+	background-color: #F5F5F5;
+	align-content: center;
+}
+
+#calendar_container {
+	width: 770px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.logo {
+	text-align: left;
+}
+
+.submit {
+	color: white;
+	border-radius: 8px;
+	border-color: #00008b;
+	background-color: #007592;
+}
+
+.submit:hover {
+	background-color: #00008b;
+	color: white;
+}
+
+button {
+  width: 75px;
+  cursor: pointer;
+  box-shadow: 0px 0px 2px gray;
+  border: none;
+  outline: none;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+}
+
+#header2 {
+  padding: 10px;
+  color: #d36c6c;
+  font-size: 26px;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: space-between;
+}
+
+#header2 button {
+  background-color:#92a1d1;
+}
+
+#weekdays {
+  width: 100%;
+  display: flex;
+  color: #247BA0;
+}
+
+#weekdays div {
+  width: 100px;
+  padding: 10px;
+}
+
+#calendar {
+  	width: 100%;
+  	margin: auto;
+  	display: flex;
+  	flex-wrap: wrap;
+}
+
+.day {
+  width: 110px;
+  padding: 0px;
+  height: 150px;
+  cursor: pointer;
+  box-sizing: border-box;
+  border: 1px solid #DCDCDC;
+  background-color: white;
+  margin: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.day:hover {
+  background-color: #e8faed;
+}
+
+.day + #currentDay {
+  background-color:#e8f4fa;
+}
+
+.padding {
+  cursor: default !important;
+  background-color: #FFFCFF !important;
+  box-shadow: none !important;
+}
+
+.event {
+  font-size: 10px;
+  padding: 3px;
+  background-color: #58bae4;
+  color: white;
+  border-radius: 5px;
+  max-height: 55px;
+  overflow: hidden;
+}
+
+#eventText {
+  font-size: 14px;
+}
+
+#modalBackDrop {
+  display: none;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  width: 100vw;
+  height: 500vh;
+  position: absolute;
+  background-color: rgba(0,0,0,0.8);
+}
+
+#cancelButton {
+  background-color: #d36c6c;
+}
+
+#deleteEventModal {
+  display: none;
+  z-index: 20;
+  padding: 25px;
+  background-color: #e8f4fa;
+  box-shadow: 0px 0px 3px black;
+  border-radius: 5px;
+  width: 350px;
+  top: 100px;
+  left: calc(50% - 175px);
+  position: fixed;
+  font-family: sans-serif;
+}
