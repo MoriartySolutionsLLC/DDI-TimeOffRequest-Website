@@ -364,6 +364,7 @@ function createRequestBody(id, startDate, endDate, reason){
 		if (day < 10) day = "0" + day; // adds a 0 if the day is less than 10 ex. 6 becomes 06
 
 		let formattedDate = year + '-' + month + '-' + day; // formats to YYYY-MM-DD
+		console.log(formattedDate);
 
 		dates.push(formattedDate); // pushes the formatted date into the dates array
 	}
