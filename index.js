@@ -347,7 +347,6 @@ function createRequestBody(id, startDate, endDate, reason){
 
 	// initializes date with the built in date class as the start date
 	const date = new Date(startDate.getTime());
-	console.log(date);
 	// initializes the dates array to hold all of the given dates between the start and the end
 	const dates = [];
 	// initializes empty requestBody string this was done to allow concatenation when iterating with the while loop
@@ -363,7 +362,6 @@ function createRequestBody(id, startDate, endDate, reason){
 		if (day < 10) day = "0" + day; // adds a 0 if the day is less than 10 ex. 6 becomes 06
 
 		let formattedDate = year + '-' + month + '-' + day; // formats to YYYY-MM-DD
-		console.log(formattedDate);
 
 		dates.push(formattedDate); // pushes the formatted date into the dates array
 		date.setDate(date.getDate() + 1); // sets the date to the next day
