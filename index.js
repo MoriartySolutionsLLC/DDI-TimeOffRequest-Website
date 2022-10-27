@@ -347,6 +347,7 @@ function createRequestBody(id, startDate, endDate, reason){
 
 	// initializes date with the built in date class as the start date
 	const date = new Date(startDate.getTime());
+	console.log(date);
 	// initializes the dates array to hold all of the given dates between the start and the end
 	const dates = [];
 	// initializes empty requestBody string this was done to allow concatenation when iterating with the while loop
