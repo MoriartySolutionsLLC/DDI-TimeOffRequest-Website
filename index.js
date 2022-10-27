@@ -355,7 +355,6 @@ function createRequestBody(id, startDate, endDate, reason){
 
 	// while loop to get every date in between/including the start and end dates and put them in the dates array
 	while (date <= endDate) {
-		date.setDate(date.getDate() + 1); // sets the date 
 		// this code sets the format of the dates to YYYY-MM-DD
 		let day = date.getDate(); // gets the day
 		let month = date.getMonth() + 1; // gets the month
@@ -367,6 +366,7 @@ function createRequestBody(id, startDate, endDate, reason){
 		console.log(formattedDate);
 
 		dates.push(formattedDate); // pushes the formatted date into the dates array
+		date.setDate(date.getDate() + 1); // sets the date to the next day
 	}
 
 	// for loop to create the individual request entries (every date needs a separate entry)
