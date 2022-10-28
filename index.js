@@ -71,7 +71,6 @@ function main(){
 	app.post('/api', (req, res) => {
 		// the data from the request
 		const data = req.body; 
-
 		const timestamp = Date.now();
 		data.timestamp = timestamp;
 
@@ -82,6 +81,7 @@ function main(){
 
 		// saves request to database
 		database.insert(data);
+		console.log(data);
 		database.find({}, function (err, docs){
 			if (err) throw new Error(err);
 
