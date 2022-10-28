@@ -81,7 +81,6 @@ function main(){
 
 		// saves request to database
 		database.insert(data);
-		console.log(data);
 		database.find({}, function (err, docs){
 			if (err) throw new Error(err);
 
