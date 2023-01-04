@@ -12,10 +12,6 @@ Read the ReadMe.md file for more information on the website and its uses for our
 let employeeList = {};
 // Initialize eventData list object
 let eventData = {};
-const Datastore = require('nedb'); // database requirement
-// creating database
-const database = new Datastore('database.db');
-database.loadDatabase();
 
 
 try {	
@@ -29,6 +25,11 @@ try {
 
 // main function
 function main(){
+  
+  const Datastore = require('nedb'); // database requirement
+  // creating database
+  const database = new Datastore('database.db');
+  database.loadDatabase();
 
 	// Run employee names at start to fill employee list
 	employeeNames(data => {
@@ -81,7 +82,6 @@ function main(){
 
 		// saves request to database
 		database.insert(data);
-		console.log(data);
 		database.find({}, function (err, docs){
 			if (err) throw new Error(err);
 
@@ -113,6 +113,34 @@ function main(){
 		});
 
 	});
+  
+  app.post('/api/delete', (req, res) => {
+    const data = req.body;
+    const timestamp = Date.now();
+    
+    database.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
+      console.log(`${data.dbId} was deleted`);
+    });
+    
+    res.json({
+      status:'success',
+      timestamp: timestamp
+    });
+  });
+  
+  app.post('/api/update', (req, res) => {
+    const data = req.body;
+    const timestamp = Date.now();
+    
+    database.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, reason: `${data.reason}`}}, {}, function(err, numReplaced){
+      console.log(`${data.dbId} was updated.`)
+    })
+    
+    res.json({
+      status:'success',
+      timestamp: timestamp
+    });
+  });
 }
 
 // Function to send email
@@ -163,6 +191,11 @@ function getToken(){
 
 async function getEventData(_callback){
 
+  const Datastore = require('nedb'); // database requirement
+  // creating database
+  const database = new Datastore('database.db');
+  database.loadDatabase();
+  
 	console.log("Sending Event Data---->");
 	const result = new Promise((resolve, reject) => {
 		database.find({}, function(err, docs){
@@ -173,6 +206,7 @@ async function getEventData(_callback){
 				objectValue['ID'] = docs[i]._id;
 				objectValue['firstName'] = docs[i].firstName;
 				objectValue['lastName'] = docs[i].lastName;
+        objectValue['inputEmail'] = docs[i].inputEmail;
 				objectValue['startDate'] = docs[i].startDate;
 				objectValue['endDate'] = docs[i].endDate;
 				objectValue['reason'] = docs[i].reason;
@@ -362,9 +396,8 @@ function createRequestBody(id, startDate, endDate, reason){
 		if (day < 10) day = "0" + day; // adds a 0 if the day is less than 10 ex. 6 becomes 06
 
 		let formattedDate = year + '-' + month + '-' + day; // formats to YYYY-MM-DD
-
 		dates.push(formattedDate); // pushes the formatted date into the dates array
-		date.setDate(date.getDate() + 1); // sets the date to the next day
+    date.setDate(date.getDate() + 1); // sets the date 
 	}
 
 	// for loop to create the individual request entries (every date needs a separate entry)
@@ -395,7 +428,7 @@ function createRequestBody(id, startDate, endDate, reason){
 	}
 
 	// creates the header for the request body
-	body = `	{
+	let body = `	{
 		"data": [{
 			"time_off_request_notes": [{
 				"note": "${reason}"
