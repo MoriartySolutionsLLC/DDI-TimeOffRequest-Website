@@ -40,12 +40,10 @@ async function on_open(){
 	const getEmpDResult = await getEmpDRes.json();
 	// sets the employee list with the result
 	employeeList = getEmpDResult;
-	console.log(getEmpDResult);
 
 	const getEvDRes = await fetch('/api/eventData', getOptions);
 	const getEvDResult = await getEvDRes.json();
 	events = getEvDResult;
-	console.log(getEvDResult);
 	load();
 
 }
@@ -76,8 +74,6 @@ async function handle_submission(){
 
 		// creates an object with the form fields
 		const data = {firstName, lastName, inputEmail, startDate, endDate, reason};
-		// logs the data object
-		console.log(JSON.stringify(data));
 		// creates post options for the api request
 		const postOptions = {
 			method: 'POST',
@@ -173,7 +169,7 @@ function load() {
     	} else {
     		fixDay = `${i - paddingDays}`;
     	}
-
+      
     	const dayString = `${year}-${fixMonth}-${fixDay}`;
 
     	if (i > paddingDays) {
@@ -212,9 +208,42 @@ function load() {
     	}
 
     	const dayString = `${year}-${fixMonth}-${fixDay}`;
-
+      
+      let dayMonth = parseInt(fixMonth)
+      let dayB = parseInt(fixDay)
+      
   		for (let k = 0; k < Object.keys(events).length; k++){
-  			if (dayString === events[k].startDate){
+        let startDay = new Date(events[k].startDate);
+        let startMonth = startDay.getMonth() + 1;
+        let startD = startDay.getDate() + 1;
+        let endDay = new Date(events[k].endDate);
+        let endMonth = endDay.getMonth() + 1;
+        let endD = endDay.getDate() + 1;
+        if (endMonth == dayMonth && startMonth < dayMonth && dayB == 1){
+        
+              let j = i - 1;
+              let endDate = false;
+              while(!endDate){
+
+                if (i - paddingDays < 10){
+                    fixDay = `0${j - paddingDays + 1}`;
+                  } else {
+                    fixDay = `${j - paddingDays + 1}`;
+                  }
+                  const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
+                  const eventDiv = document.createElement('div');
+                  eventDiv.classList.add('event');
+                  eventDiv.innerText = `${events[k].firstName} ${events[k].lastName}`;
+                  days[j].appendChild(eventDiv);
+                  eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].firstName}`, `${events[k].lastName}`));
+                  if (parseInt(fixDay) == endD){
+                    endDate = true;
+                  }
+                  j++;
+              }
+        }
+        
+  			if (dayString == events[k].startDate){
   				let j = i - 1;
   				let endDate = false;
   				while(!endDate){
@@ -225,14 +254,14 @@ function load() {
 			    		fixDay = `${j - paddingDays + 1}`;
 			    	}
 			    	const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
-					const eventDiv = document.createElement('div');
-        			eventDiv.classList.add('event');
-        			eventDiv.innerText = `${events[k].firstName} ${events[k].lastName}`;
-        			days[j].appendChild(eventDiv);
-        			eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].firstName}`, `${events[k].lastName}`));
-        			if (tempDayStr === events[k].endDate){
-		    			endDate = true;
-		    		}
+					  const eventDiv = document.createElement('div');
+            eventDiv.classList.add('event');
+            eventDiv.innerText = `${events[k].firstName} ${events[k].lastName}`;
+            days[j].appendChild(eventDiv);
+            eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].firstName}`, `${events[k].lastName}`));
+            if (parseInt(startD) == parseInt(endD) || parseInt(fixDay) == endD || j == days.length - 1){
+              endDate = true;
+            }
   				j++;
   				}
   			}
@@ -244,12 +273,19 @@ function load() {
 function openModal(startDate, endDate, firstName, lastName){
 
   	const eventForDay = events.find(e => e.firstName === firstName && e.lastName === lastName && e.endDate === endDate && e.startDate === startDate);
-
+    document.getElementById('deleteButton').addEventListener('click', () => deleteEntry(eventForDay.ID));
+    document.getElementById('updateButton').addEventListener('click', () => updateEntry(eventForDay.ID));
+    console.log(eventForDay.ID)
   	if (eventForDay) {
-    	document.getElementById('eventText').innerText = `${eventForDay.firstName} ${eventForDay.lastName}\nLeaving: ${eventForDay.startDate} - ${eventForDay.endDate} \n${eventForDay.reason}`;
+      document.getElementById('fn').value = eventForDay.firstName;
+      document.getElementById('ln').value = eventForDay.lastName;
+      document.getElementById('email').value = eventForDay.inputEmail;
+      document.getElementById('sd').value = eventForDay.startDate;
+      document.getElementById('ed').value = eventForDay.endDate;
+      document.getElementById('re').value = eventForDay.reason;
     	deleteEventModal.style.display = 'block';
 
-  	backDrop.style.display = 'block';
+  	  backDrop.style.display = 'block';
 	}
 
 }
@@ -257,6 +293,58 @@ function openModal(startDate, endDate, firstName, lastName){
 function closeModal() {
   deleteEventModal.style.display = 'none';
   backDrop.style.display = 'none';
-  clicked = null;
+  let clicked = null;
   load();
+}
+
+async function updateEntry(dbId){
+  const startDate = document.getElementById('sd').value;
+  const endDate = document.getElementById('ed').value;
+  const reason = document.getElementById('re').value;
+  
+  if (dbId == document.getElementById('dbId').value){
+    let confirmation = confirm('Are you sure you want to update this entry?');
+    if (confirmation){
+      // creates an object with field information to update
+      const data = {dbId, startDate, endDate, reason};
+      // creates post options for the api request
+      const postOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      }
+      // requests to post form data to the web server and reads the result as json
+      const postRes = await fetch('/api/update', postOptions);
+      const postResult = await postRes.json();
+    }
+    location.reload();
+  } else {
+    alert('Incorrect Entry ID')
+  }
+}
+
+async function deleteEntry(dbId){
+  if (dbId == document.getElementById('dbId').value){
+    let confirmation = confirm('Are you sure you want to delete this entry?');
+    if (confirmation){
+      // creates an object with the id to delete 
+      const data = {dbId};
+      // creates post options for the api request
+      const postOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      }
+      // requests to post form data to the web server and reads the result as json
+      const postRes = await fetch('/api/delete', postOptions);
+      const postResult = await postRes.json();
+    }
+    location.reload();
+  } else {
+    alert('Incorrect Entry ID')
+  }
 }
